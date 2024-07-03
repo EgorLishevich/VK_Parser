@@ -15,4 +15,14 @@ group_response = requests.get(
 )
 id_data = group_response.json()['response']['items']
 
-
+for user_id in id_data:
+    member_response = requests.get(
+        'https://api.vk.com/method/users.get',
+        params={
+            'access_token': TOKEN_USER,
+            'v': VERSION,
+            'user_ids': user_id,
+            'fields': 'counters'
+        }
+    )
+    print(member_response.json())
