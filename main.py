@@ -1,4 +1,5 @@
 import requests
+import time
 
 
 TOKEN_USER = '40ded58740ded58740ded5877543c7ef12440de40ded587265b13062271608f02ab200a'
@@ -15,14 +16,21 @@ group_response = requests.get(
 )
 id_data = group_response.json()['response']['items']
 
-for user_id in id_data:
-    member_response = requests.get(
-        'https://api.vk.com/method/users.get',
-        params={
-            'access_token': TOKEN_USER,
-            'v': VERSION,
-            'user_ids': user_id,
-            'fields': 'counters'
-        }
-    )
-    print(member_response.json())
+try:
+    for user_id in id_data:
+        member_response = requests.get(
+            'https://api.vk.com/method/users.get',
+            params={
+                'access_token': TOKEN_USER,
+                'v': VERSION,
+                'user_ids': user_id,
+                'fields': 'counters, city, last_seen'
+            }
+        )
+        data = member_response.json()['response'][0]
+        print(
+            f'Фамилия: {data["last_name"]} Имя: {data["first_name"]}'
+        )
+        time.sleep(0.1)
+except KeyError:
+    pass
