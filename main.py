@@ -4,9 +4,10 @@ import time
 
 TOKEN_USER = '40ded58740ded58740ded5877543c7ef12440de40ded587265b13062271608f02ab200a'
 VERSION = '5.199'
-DOMAIN = 'streaminside'
+DOMAIN = 'it_roll'
 
-group_response = requests.get(
+
+group_count_response = requests.get(
     'https://api.vk.com/method/groups.getMembers',
     params={
         'access_token': TOKEN_USER,
@@ -14,10 +15,25 @@ group_response = requests.get(
         'group_id': DOMAIN,
     }
 )
-id_data = group_response.json()['response']['items']
+count = group_count_response.json()['response']['count']
 
+id_data = []
 
-for user_id in id_data:
+for i in range(0, count+1, 1000):
+    group_response = requests.get(
+        'https://api.vk.com/method/groups.getMembers',
+        params={
+            'access_token': TOKEN_USER,
+            'v': VERSION,
+            'group_id': DOMAIN,
+            'offset': i
+        }
+    )
+    id_datas = group_response.json()['response']['items']
+    id_data.append(id_datas)
+    time.sleep(0.1)
+
+for user_id in id_data[0]:
     try:
         member_response = requests.get(
             'https://api.vk.com/method/users.get',
@@ -52,4 +68,5 @@ for user_id in id_data:
             f'| Колл-во пабликов: {data["counters"]["groups"]}'
         )
     except KeyError:
+        print('Недостаточно данных пользователя')
         pass
