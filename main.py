@@ -68,5 +68,4 @@ for user_id in id_data[0]:
             f'| Колл-во пабликов: {data["counters"]["groups"]}'
         )
     except KeyError:
-        print('Недостаточно данных пользователя')
         pass
