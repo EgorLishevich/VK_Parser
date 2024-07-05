@@ -16,21 +16,40 @@ group_response = requests.get(
 )
 id_data = group_response.json()['response']['items']
 
-try:
-    for user_id in id_data:
+
+for user_id in id_data:
+    try:
         member_response = requests.get(
             'https://api.vk.com/method/users.get',
             params={
                 'access_token': TOKEN_USER,
                 'v': VERSION,
-                'user_ids': user_id,
+                'user_id': user_id,
                 'fields': 'counters, city, last_seen'
             }
         )
         data = member_response.json()['response'][0]
-        print(
-            f'Фамилия: {data["last_name"]} Имя: {data["first_name"]}'
+        member_friends_response = requests.get(
+            'https://api.vk.com/method/friends.get',
+            params={
+                'access_token': TOKEN_USER,
+                'v': VERSION,
+                'user_id': user_id,
+            }
         )
-        time.sleep(0.1)
-except KeyError:
-    pass
+        friends_data = member_friends_response.json()['response']['count']
+        unix_last_seen_date = float(data['last_seen']['time'])
+        time_struct = time.gmtime(unix_last_seen_date)
+        last_seen_date = time.strftime("%B %d %Y %H:%M:%S", time_struct)
+        print(
+            f'Ссылка: https://vk.com/id{data["id"]} '
+            f'| Фамилия: {data["last_name"]} '
+            f'| Имя: {data["first_name"]} '
+            f'| Город: {data["city"]["title"]}'
+            f'| Последнее посещение {last_seen_date} '
+            f'| Колл-во друзей: {friends_data}'
+            f'| Колл-во фото: {data["counters"]["photos"]}'
+            f'| Колл-во пабликов: {data["counters"]["groups"]}'
+        )
+    except KeyError:
+        pass
