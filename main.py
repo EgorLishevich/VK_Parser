@@ -1,20 +1,19 @@
+import time
+import requests
+
 from kivy.app import App
-from kivy.uix.label import Label
-from kivy.uix.textinput import TextInput
+from kivy.core.window import Window
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.button import Button
-from kivy.uix.scrollview import ScrollView
-
-from kivy.core.window import Window
-
-import requests
-import time
+from kivy.uix.textinput import TextInput
 
 
-TOKEN_USER = '40ded58740ded58740ded5877543c7ef12440de40ded587265b13062271608f02ab200a'
+TOKEN = (
+    '40ded58740ded58740ded5877543c7ef12440de40ded587265b13062271608f02ab200a'
+)
 VERSION = '5.199'
 
-Window.size = (1200, 1200)
+Window.size = (1600, 1400)
 Window.clearcolor = (20/255, 20/255, 20/255, 1)
 Window.title = 'VK_Parser'
 
@@ -23,7 +22,7 @@ def group_count(group_name):
     group_count_response = requests.get(
         'https://api.vk.com/method/groups.getMembers',
         params={
-            'access_token': TOKEN_USER,
+            'access_token': TOKEN,
             'v': VERSION,
             'group_id': group_name,
         }
@@ -38,7 +37,7 @@ def group_response(group_name, count):
         group_response = requests.get(
             'https://api.vk.com/method/groups.getMembers',
             params={
-                'access_token': TOKEN_USER,
+                'access_token': TOKEN,
                 'v': VERSION,
                 'group_id': group_name,
                 'offset': i
@@ -52,14 +51,13 @@ def group_response(group_name, count):
 
 def user_response(id_data):
     result = []
-    a = ()
     while True:
         for user_id in id_data[0]:
             try:
                 member_response = requests.get(
                     'https://api.vk.com/method/users.get',
                     params={
-                        'access_token': TOKEN_USER,
+                        'access_token': TOKEN,
                         'v': VERSION,
                         'user_id': user_id,
                         'fields': 'counters, city, last_seen'
@@ -69,7 +67,7 @@ def user_response(id_data):
                 member_friends_response = requests.get(
                     'https://api.vk.com/method/friends.get',
                     params={
-                        'access_token': TOKEN_USER,
+                        'access_token': TOKEN,
                         'v': VERSION,
                         'user_id': user_id,
                     }
@@ -107,10 +105,18 @@ class MyApp(App):
     def __init__(self):
         super().__init__()
         self.group_name_input = TextInput(
-            hint_text='Введите короткое имя или id паблика', multiline=False
+            hint_text='Введите короткое имя или id паблика',
+            multiline=False,
+            size_hint=(1.0, 0.05),
         )
-        self.output = TextInput(multiline=True, readonly=True)
-        self.button = Button(text='Подтвердить')
+        self.output = TextInput(
+            hint_text='Результат', multiline=True, readonly=True
+        )
+        self.button = Button(
+            text='Подтвердить',
+            size_hint=(1.0, 0.05),
+            background_color=(1, 1, 1, 1)
+        )
         self.group_name_input.bind(text=self.on_text)
         self.button.bind(on_press=self.click)
 
