@@ -46,16 +46,15 @@ def group_response(group_name, count):
             }
         )
         id_datas = group_response.json()['response']['items']
-        id_data.append(id_datas)
-        time.sleep(0.1)
-        return id_data
+        id_data.extend(id_datas)
+    return id_data
 
 
 def user_response(id_data):
     '''Сбор всей необходимой информации'''
     result = []
     while True:
-        for user_id in id_data[0]:
+        for user_id in id_data:
             try:
                 member_response = requests.get(
                     'https://api.vk.com/method/users.get',
@@ -99,7 +98,7 @@ def user_response(id_data):
             except KeyError:
                 pass
             if user_id == id_data[-1]:
-                return False
+                False
         return ('\n'.join(result))
 
 
