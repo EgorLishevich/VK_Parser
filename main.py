@@ -19,6 +19,7 @@ Window.title = 'VK_Parser'
 
 
 def group_count(group_name):
+    '''Сбор общего числа подписчиков паблика'''
     group_count_response = requests.get(
         'https://api.vk.com/method/groups.getMembers',
         params={
@@ -32,6 +33,7 @@ def group_count(group_name):
 
 
 def group_response(group_name, count):
+    '''Сбор id подписчиков'''
     id_data = []
     for i in range(0, count+1, 1000):
         group_response = requests.get(
@@ -50,6 +52,7 @@ def group_response(group_name, count):
 
 
 def user_response(id_data):
+    '''Сбор всей необходимой информации'''
     result = []
     while True:
         for user_id in id_data[0]:
@@ -101,7 +104,7 @@ def user_response(id_data):
 
 
 class MyApp(App):
-
+    '''Инициализация интерфейса'''
     def __init__(self):
         super().__init__()
         self.group_name_input = TextInput(
