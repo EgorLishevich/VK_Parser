@@ -1,1 +1,0 @@
-([('main', '/Users/iwannas1e3p/Dev/VK_Parser/dist/main', 'EXECUTABLE')],)
